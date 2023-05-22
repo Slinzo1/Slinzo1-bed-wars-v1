@@ -1,0 +1,613 @@
+local Library = loadstring(game:HttpGet("https://pastebin.com/raw/vff1bQ9F"))()
+
+local Window = Library.CreateLib("Slinzo1 HUB v1", "GrapeTheme")
+
+-- MAIN
+
+local Main = Window:NewTab("Main")
+
+local MainSection = Main:NewSection("Main")
+
+MainSection:NewToggle("BedNuker", "Auto break bed and covers", function(state) 
+
+         if state then 
+
+                 BindToStepped("BedNuker", 1, function() 
+
+                         nuker() 
+
+                 end) 
+
+         else 
+
+                 UnbindFromStepped("BedNuker") 
+
+         end 
+
+ end) 
+
+ 
+
+ MainSection:NewToggle("KillAura", "Autoswing the sword if someone is near you", function(state)
+
+	if state then
+
+		BindToStepped("Killaura", 1, function()
+
+			if entity.isAlive then
+
+				KillauraRemote()
+
+			end
+
+		end)
+
+	else
+
+		UnbindFromStepped("Killaura")
+
+	end
+
+end)
+
+MainSection:NewSlider("Distance 1-20", "Increase killaura distance", 20, 1, function(val)
+
+	DistVal["Value"] = val
+
+end)
+
+MainSection:NewToggle("No Swing", "Disable killaura swing", function(state)
+
+	if state then
+
+		if killauraswing["Enabled"] == true then
+
+			killauraswing["Enabled"] = false
+
+		end
+
+	else
+
+		if killauraswing["Enabled"] == false then
+
+			killauraswing["Enabled"] = true
+
+		end
+
+	end
+
+end)
+
+MainSection:NewSlider("Sound 1-0", "Adjust killaura sound", 1, 0, function(val)
+
+	killaurasoundval["Value"] = val
+
+end)
+
+MainSection:NewButton("Keyboard", "Opens Keyboard", function()
+
+loadstring(game:HttpGet("https://pastebin.com/raw/kC3dAMvt"))()
+
+end)
+
+MainSection:NewToggle("No Fall Damage", "Opens No Fall Damage", function(callback)
+
+    local nofall = true
+
+    if callback then
+
+        if nofall then
+
+            spawn(function()
+
+                repeat
+
+                    wait()
+
+                    if nofall == false then
+
+                        return end
+
+                        game:GetService("ReplicatedStorage").rbxts_include.node_modules.net.out._NetManaged.GroundHit:FireServer()
+
+                    until nofall == false
+
+                end)
+
+            end
+
+    else
+
+        local nofall = false
+
+    end
+
+end)
+
+MainSection:NewButton("Inf Jumps", "Loads My Old Script", function()
+
+local InfiniteJumpEnabled = true
+
+game:GetService("UserInputService").JumpRequest:connect(function()
+
+	if InfiniteJumpEnabled then
+
+		game:GetService"Players".LocalPlayer.Character:FindFirstChildOfClass'Humanoid':ChangeState("Jumping")
+
+	end
+
+end)
+
+end)
+
+--velocity
+
+MainSection:NewToggle("Velocity", "Prevents taking a knockback", function(state) 
+
+         if state then 
+
+                 KnockbackTable["kbDirectionStrength"] = 0 
+
+                 KnockbackTable["kbUpwardStrength"] = 0 
+
+         else 
+
+                 KnockbackTable["kbDirectionStrength"] = 100 
+
+                 KnockbackTable["kbUpwardStrength"] = 100 
+
+         end 
+
+ end)
+
+ 
+
+ MainSection:NewToggle("Reach", "Extend your attack range", function(state) 
+
+         if state then 
+
+                 CombatConstant.RAYCAST_SWORD_CHARACTER_DISTANCE = (reachval["Value"] - 0.0001) 
+
+         else 
+
+                 CombatConstant.RAYCAST_SWORD_CHARACTER_DISTANCE = 14.4 
+
+         end 
+
+ end) 
+
+  
+
+MainSection:NewSlider("Range 18-1", "", 18, 1, function(val) -- 500 (MaxValue) | 0 (MinValue) 
+
+         reachval["Value"] = val 
+
+ end)
+
+ 
+
+ MainSection:NewToggle("ESP", "ToggleInfo", function(state)
+
+    if state then
+
+        local lplr = game.Players.LocalPlayer
+
+local camera = game:GetService("Workspace").CurrentCamera
+
+local CurrentCamera = workspace.CurrentCamera
+
+local worldToViewportPoint = CurrentCamera.worldToViewportPoint
+
+local HeadOff = Vector3.new(0, 0.5, 0)
+
+local LegOff = Vector3.new(0,3,0)
+
+for i,v in pairs(game.Players:GetChildren()) do
+
+    local BoxOutline = Drawing.new("Square")
+
+    BoxOutline.Visible = false
+
+    BoxOutline.Color = Color3.new(0,0,0)
+
+    BoxOutline.Thickness = 3
+
+    BoxOutline.Transparency = 1
+
+    BoxOutline.Filled = false
+
+    local Box = Drawing.new("Square")
+
+    Box.Visible = false
+
+    Box.Color = Color3.new(1,1,1)
+
+    Box.Thickness = 1
+
+    Box.Transparency = 1
+
+    Box.Filled = false
+
+    local HealthBarOutline = Drawing.new("Square")
+
+    HealthBarOutline.Thickness = 3
+
+    HealthBarOutline.Filled = false
+
+    HealthBarOutline.Color = Color3.new(0,0,0)
+
+    HealthBarOutline.Transparency = 1
+
+    HealthBarOutline.Visible = false
+
+    local HealthBar = Drawing.new("Square")
+
+    HealthBar.Thickness = 1
+
+    HealthBar.Filled = false
+
+    HealthBar.Transparency = 1
+
+    HealthBar.Visible = false
+
+    function boxesp()
+
+        game:GetService("RunService").RenderStepped:Connect(function()
+
+            if v.Character ~= nil and v.Character:FindFirstChild("Humanoid") ~= nil and v.Character:FindFirstChild("HumanoidRootPart") ~= nil and v ~= lplr and v.Character.Humanoid.Health > 0 then
+
+                local Vector, onScreen = camera:worldToViewportPoint(v.Character.HumanoidRootPart.Position)
+
+                local RootPart = v.Character.HumanoidRootPart
+
+                local Head = v.Character.Head
+
+                local RootPosition, RootVis = worldToViewportPoint(CurrentCamera, RootPart.Position)
+
+                local HeadPosition = worldToViewportPoint(CurrentCamera, Head.Position + HeadOff)
+
+                local LegPosition = worldToViewportPoint(CurrentCamera, RootPart.Position - LegOff)
+
+                if onScreen then
+
+                    BoxOutline.Size = Vector2.new(1000 / RootPosition.Z, HeadPosition.Y - LegPosition.Y)
+
+                    BoxOutline.Position = Vector2.new(RootPosition.X - BoxOutline.Size.X / 2, RootPosition.Y - BoxOutline.Size.Y / 2)
+
+                    BoxOutline.Visible = true
+
+                    Box.Size = Vector2.new(1000 / RootPosition.Z, HeadPosition.Y - LegPosition.Y)
+
+                    Box.Position = Vector2.new(RootPosition.X - Box.Size.X / 2, RootPosition.Y - Box.Size.Y / 2)
+
+                    Box.Visible = true
+
+                    HealthBarOutline.Size = Vector2.new(2, HeadPosition.Y - LegPosition.Y)
+
+                    HealthBarOutline.Position = BoxOutline.Position - Vector2.new(6,0)
+
+                    HealthBarOutline.Visible = true
+
+                    HealthBar.Size = Vector2.new(2, (HeadPosition.Y - LegPosition.Y) / (game:GetService("Players")[v.Character.Name].NRPBS["MaxHealth"].Value / math.clamp(game:GetService("Players")[v.Character.Name].NRPBS["Health"].Value, 0, game:GetService("Players")[v.Character.Name].NRPBS:WaitForChild("MaxHealth").Value)))
+
+                    HealthBar.Position = Vector2.new(Box.Position.X - 6, Box.Position.Y + (1 / HealthBar.Size.Y))
+
+                    HealthBar.Color = Color3.fromRGB(255 - 255 / (game:GetService("Players")[v.Character.Name].NRPBS["MaxHealth"].Value / game:GetService("Players")[v.Character.Name].NRPBS["Health"].Value), 255 / (game:GetService("Players")[v.Character.Name].NRPBS["MaxHealth"].Value / game:GetService("Players")[v.Character.Name].NRPBS["Health"].Value), 0)
+
+                    HealthBar.Visible = true
+
+                    if v.TeamColor == lplr.TeamColor then
+
+                        --- Our Team
+
+                        BoxOutline.Visible = false
+
+                        Box.Visible = false
+
+                        HealthBarOutline.Visible = false
+
+                        HealthBar.Visible = false
+
+                    else
+
+                        ---Enemy Team
+
+                        BoxOutline.Visible = true
+
+                        Box.Visible = true
+
+                        HealthBarOutline.Visible = true
+
+                        HealthBar.Visible = true
+
+                    end
+
+                else
+
+                    BoxOutline.Visible = false
+
+                    Box.Visible = false
+
+                    HealthBarOutline.Visible = false
+
+                    HealthBar.Visible = false
+
+                end
+
+            else
+
+                BoxOutline.Visible = false
+
+                Box.Visible = false
+
+                HealthBarOutline.Visible = false
+
+                HealthBar.Visible = false
+
+            end
+
+        end)
+
+    end
+
+    coroutine.wrap(boxesp)()
+
+end
+
+game.Players.PlayerAdded:Connect(function(v)
+
+    local BoxOutline = Drawing.new("Square")
+
+    BoxOutline.Visible = false
+
+    BoxOutline.Color = Color3.new(0,0,0)
+
+    BoxOutline.Thickness = 3
+
+    BoxOutline.Transparency = 1
+
+    BoxOutline.Filled = false
+
+    local Box = Drawing.new("Square")
+
+    Box.Visible = false
+
+    Box.Color = Color3.new(1,1,1)
+
+    Box.Thickness = 1
+
+    Box.Transparency = 1
+
+    Box.Filled = false
+
+    local HealthBarOutline = Drawing.new("Square")
+
+    HealthBarOutline.Thickness = 3
+
+    HealthBarOutline.Filled = false
+
+    HealthBarOutline.Color = Color3.new(0,0,0)
+
+    HealthBarOutline.Transparency = 1
+
+    HealthBarOutline.Visible = false
+
+    local HealthBar = Drawing.new("Square")
+
+    HealthBar.Thickness = 1
+
+    HealthBar.Filled = false
+
+    HealthBar.Transparency = 1
+
+    HealthBar.Visible = false
+
+    function boxesp()
+
+        game:GetService("RunService").RenderStepped:Connect(function()
+
+            if v.Character ~= nil and v.Character:FindFirstChild("Humanoid") ~= nil and v.Character:FindFirstChild("HumanoidRootPart") ~= nil and v ~= lplr and v.Character.Humanoid.Health > 0 then
+
+                local Vector, onScreen = camera:worldToViewportPoint(v.Character.HumanoidRootPart.Position)
+
+                local RootPart = v.Character.HumanoidRootPart
+
+                local Head = v.Character.Head
+
+                local RootPosition, RootVis = worldToViewportPoint(CurrentCamera, RootPart.Position)
+
+                local HeadPosition = worldToViewportPoint(CurrentCamera, Head.Position + HeadOff)
+
+                local LegPosition = worldToViewportPoint(CurrentCamera, RootPart.Position - LegOff)
+
+                if onScreen then
+
+                    BoxOutline.Size = Vector2.new(1000 / RootPosition.Z, HeadPosition.Y - LegPosition.Y)
+
+                    BoxOutline.Position = Vector2.new(RootPosition.X - BoxOutline.Size.X / 2, RootPosition.Y - BoxOutline.Size.Y / 2)
+
+                    BoxOutline.Visible = true
+
+                    Box.Size = Vector2.new(1000 / RootPosition.Z, HeadPosition.Y - LegPosition.Y)
+
+                    Box.Position = Vector2.new(RootPosition.X - Box.Size.X / 2, RootPosition.Y - Box.Size.Y / 2)
+
+                    Box.Visible = true
+
+                    HealthBarOutline.Size = Vector2.new(2, HeadPosition.Y - LegPosition.Y)
+
+                    HealthBarOutline.Position = BoxOutline.Position - Vector2.new(6,0)
+
+                    HealthBarOutline.Visible = true
+
+                    HealthBar.Size = Vector2.new(2, (HeadPosition.Y - LegPosition.Y) / (game:GetService("Players")[v.Character.Name].NRPBS["MaxHealth"].Value / math.clamp(game:GetService("Players")[v.Character.Name].NRPBS["Health"].Value, 0, game:GetService("Players")[v.Character.Name].NRPBS:WaitForChild("MaxHealth").Value)))
+
+                    HealthBar.Position = Vector2.new(Box.Position.X - 6, Box.Position.Y + (1/HealthBar.Size.Y))
+
+		    HealthBar.Color = Color3.fromRGB(255 - 255 / (game:GetService("Players")[v.Character.Name].NRPBS["MaxHealth"].Value / game:GetService("Players")[v.Character.Name].NRPBS["Health"].Value), 255 / (game:GetService("Players")[v.Character.Name].NRPBS["MaxHealth"].Value / game:GetService("Players")[v.Character.Name].NRPBS["Health"].Value), 0)                    
+
+		    HealthBar.Visible = true
+
+                    if v.TeamColor == lplr.TeamColor then
+
+                        --- Our Team
+
+                        BoxOutline.Visible = false
+
+                        Box.Visible = false
+
+                        HealthBarOutline.Visible = false
+
+                        HealthBar.Visible = false
+
+                    else
+
+                        ---Enemy Team
+
+                        BoxOutline.Visible = true
+
+                        Box.Visible = true
+
+                        HealthBarOutline.Visible = true
+
+                        HealthBar.Visible = true
+
+                    end
+
+                else
+
+                    BoxOutline.Visible = false
+
+                    Box.Visible = false
+
+                    HealthBarOutline.Visible = false
+
+                    HealthBar.Visible = false
+
+                end
+
+            else
+
+                BoxOutline.Visible = false
+
+                Box.Visible = false
+
+                HealthBarOutline.Visible = false
+
+                HealthBar.Visible = false
+
+            end
+
+        end)
+
+    end
+
+    coroutine.wrap(boxesp)()
+
+end)
+
+    else
+
+        print("Toggle Off")
+
+    end
+
+end)
+
+MainSection:NewLabel("speed")
+
+MainSection:NewTextBox("TextboxText", "TextboxInfo", function(txt)
+
+	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = txt
+
+end)
+
+-- Animation
+
+local Animation = Window:NewTab("Animation")
+
+local AnimationSection = Animation:NewSection("All animation are Fe")
+
+AnimationSection:NewButton("Zombie Animation" , "Plays Zombie Animation",function()
+
+loadstring(game:HttpGet("https://pastebin.com/raw/t3yTSPRn",true))()
+
+end)
+
+AnimationSection:NewButton("Ninja Animation","Plays Ninja Animation",function()
+
+loadstring(game:HttpGet("https://pastebin.com/raw/bwGLPVV7",true))()
+
+end)
+
+AnimationSection:NewButton("Robot Animation","Plays Robot Animation",function()
+
+local Animate =
+
+game.Players.LocalPlayer.Character.Animate
+
+Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=616088211"
+
+Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=616089559"
+
+Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=616095330"
+
+Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=616091570"
+
+Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=616090535"
+
+Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=616086039"
+
+Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=616087089"
+
+end)
+
+AnimationSection:NewButton("Toy Animation","Opens Toy Animation",function()
+
+local Animate =
+
+game.Players.LocalPlayer.Character.Animate
+
+Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=782841498"
+
+Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=782845736"
+
+Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=782843345"
+
+Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=782842708"
+
+Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=782847020"
+
+Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=782843869"
+
+Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=782846423"
+
+end)
+
+AnimationSection:NewLabel("capes")
+
+AnimationSection:NewButton("FerestZ cape", "", function()
+
+    local player = game:GetService("Players") local lplr = player.LocalPlayer if lplr.Character.Humanoid.RigType == Enum.HumanoidRigType.R15 then if lplr.Character:FindFirstChild("Torso") then torso = lplr.Character.Torso else torso = lplr.Character.UpperTorso end local CapeP = Instance.new("Part", torso.Parent) CapeP.Name = "Cape" CapeP.Anchored = false CapeP.CanCollide = false CapeP.TopSurface = 0 CapeP.BottomSurface = 0 CapeP.Color = Color3.fromRGB(0,0,0) CapeP.FormFactor = "Custom" CapeP.Size = Vector3.new(0.2,0.2,0.2) local decal = Instance.new("Decal", CapeP) decal.Texture = "http://www.roblox.com/asset/?id=9695902096" decal.Face = "Back" local msh = Instance.new("BlockMesh", CapeP) msh.Scale = Vector3.new(9,17.5,0.5) local motor = Instance.new("Motor", CapeP) motor.Part0 = CapeP motor.Part1 = torso motor.MaxVelocity = 0.01 motor.C0 = CFrame.new(0,1.75,0) * CFrame.Angles(0,math.rad(90),0) motor.C1 = CFrame.new(0,1,0.45) * CFrame.Angles(0,math.rad(90),0) local wave = false repeat wait(1/44) decal.Transparency = torso.Transparency local ang = 0.1 local oldmag = torso.Velocity.magnitude local mv = 0.002 if wave then ang = ang + ((torso.Velocity.magnitude/10) * 0.05) + 0.05 wave = false else wave = true end ang = ang + math.min(torso.Velocity.magnitude/11, 0.5) motor.MaxVelocity = math.min((torso.Velocity.magnitude/111), 0.04) + mv motor.DesiredAngle = -ang if motor.CurrentAngle < -0.2 and motor.DesiredAngle > -0.2 then motor.MaxVelocity = 0.04 end repeat wait() until motor.CurrentAngle == motor.DesiredAngle or math.abs(torso.Velocity.magnitude - oldmag) >= (torso.Velocity.magnitude/10) + 1 if torso.Velocity.magnitude < 0.1 then wait(0.1) end until not CapeP or CapeP.Parent ~= torso.Parent end
+
+end)
+
+AnimationSection:NewButton("Rainbow cape", "", function()
+
+    local verlet = {} verlet.step_time = 1 / 50 verlet.gravity = Vector3.new(0, -10, 0) local char = game.Players.LocalPlayer.Character local torso = char:WaitForChild("Torso") local parts = {} local render = game:GetService("RunService").RenderStepped wait(2) local point = {} local link = {} local rope = {} local function ccw(A,B,C) return (C.y-A.y) * (B.x-A.x) > (B.y-A.y) * (C.x-A.x) end local function intersect(A,B,C,D) return ccw(A,C,D) ~= ccw(B,C,D) and ccw(A,B,C) ~= ccw(A,B,D) end local function vec2(v) 	return Vector2.new(v.x, v.z) end function point:step() 	if not self.fixed then 		local derivative = (self.position - self.last_position) * 0.95 		self.last_position = self.position 		self.position = self.position + derivative + (self.velocity * verlet.step_time ^ 2) 		--[[local torsoP = torso.CFrame * CFrame.new(-1, 0, 0.5) 		local torsoE = torso.CFrame * CFrame.new(1, 0, 0.5) 		local pointE = self.position + torso.CFrame.lookVector * 100 		local doIntersect = intersect(vec2(torsoP.p), vec2(torsoE.p), vec2(self.position), vec2(pointE)) 		if not doIntersect then 			self.postition = self.position - torso.CFrame.lookVector * 10 		end]] 	end end function link:step() 	for i = 1, 1 do 		local distance = self.point1.position - self.point2.position 		local magnitude = distance.magnitude 		local differance = (self.length - magnitude) / magnitude 		local translation = ((self.point1.fixed or self.point2.fixed) and 1 or 0.6) * distance * differance 		if not self.point1.fixed then 			self.point1.position = self.point1.position + translation 		end 		if not self.point2.fixed then 			self.point2.position = self.point2.position - translation 		end 	end end function verlet.new(class, a, b, c) 	if class == "Point" then 		local new = {} 		setmetatable(new, {__index = point}) 		new.class = class 		new.position = a or Vector3.new() 		new.last_position = new.position 		new.velocity = verlet.gravity 		new.fixed = false 		return new 	elseif class == "Link" then 		local new = {} 		setmetatable(new, {__index = link}) 		new.class = class 		new.point1 = a 		new.point2 = b 		new.length = c or (a.position - b.position).magnitude 		return new 	elseif class == "Rope" then 		local new = {} 		setmetatable(new, {__index = link}) 		new.class = class 		new.start_point = a 		new.finish_point = b 		new.points = {} 		new.links = {} 		local inc = (b - a) / 10 		for i = 0, 10 do 			table.insert(new.points, verlet.new("Point", a + (i * inc))) 		end 		for i = 2, #new.points do 			table.insert(new.links, verlet.new("Link", new.points[i - 1], new.points[i])) 		end 		return new 	end end local tris = {} local triParts = {} local function GetDiscoColor(hue) local section = hue % 1 * 3 local secondary = 0.5 * math.pi * (section % 1) if section < 1 then return Color3.new(1, 1 - math.cos(secondary), 1 - math.sin(secondary)) elseif section < 2 then return Color3.new(1 - math.sin(secondary), 1, 1 - math.cos(secondary)) else return Color3.new(1 - math.cos(secondary), 1 - math.sin(secondary), 1) end end local function setupPart(part) 	part.Anchored = true 	part.FormFactor = 3 	part.CanCollide = false 	part.TopSurface = 10 	part.BottomSurface = 10 	part.LeftSurface = 10 	part.RightSurface = 10 	part.FrontSurface = 10 	part.BackSurface = 10 	part.Material = "Neon" 	local m = Instance.new("SpecialMesh", part) 	m.MeshType = "Wedge" 	m.Scale = Vector3.new(0.2, 1, 1) 	return part end local function CFrameFromTopBack(at, top, back) 	local right = top:Cross(back) 	return CFrame.new(at.x, at.y, at.z, right.x, top.x, back.x, right.y, top.y, back.y, right.z, top.z, back.z) end local function drawTri(parent, a, b, c) 	local this = {} 	local mPart1 = table.remove(triParts, 1) or setupPart(Instance.new("Part")) 	local mPart2 = table.remove(triParts, 1) or setupPart(Instance.new("Part")) 	function this:Set(a, b, c) 		local ab, bc, ca = b-a, c-b, a-c 		local abm, bcm, cam = ab.magnitude, bc.magnitude, ca.magnitude 		local edg1 = math.abs(0.5 + ca:Dot(ab)/(abm*abm)) 		local edg2 = math.abs(0.5 + ab:Dot(bc)/(bcm*bcm)) 		local edg3 = math.abs(0.5 + bc:Dot(ca)/(cam*cam)) 		if edg1 < edg2 then 			if edg1 >= edg3 then		 				a, b, c = c, a, b 				ab, bc, ca = ca, ab, bc 				abm = cam 			end 		else 			if edg2 < edg3 then 				a, b, c = b, c, a 				ab, bc, ca = bc, ca, ab 				abm = bcm 			else 				a, b, c = c, a, b 				ab, bc, ca = ca, ab, bc 				abm = cam 			end 		end 	 		local len1 = -ca:Dot(ab)/abm 		local len2 = abm - len1 		local width = (ca + ab.unit*len1).magnitude 	 		local maincf = CFrameFromTopBack(a, ab:Cross(bc).unit, -ab.unit) 	 		if len1 > 0.2 then 			mPart1.Parent = parent 			mPart1.Size = Vector3.new(0.2, width, len1) 			mPart1.CFrame = maincf*CFrame.Angles(math.pi,0,math.pi/2)*CFrame.new(0,width/2,len1/2) 		else 			mPart1.Parent = nil 		end 		 		if len2 > 0.2 then 			mPart2.Parent = parent 			mPart2.Size = Vector3.new(0.2, width, len2) 			mPart2.CFrame = maincf*CFrame.Angles(math.pi,math.pi,-math.pi/2)*CFrame.new(0,width/2,-len1 - len2/2) 		else 			mPart2.Parent = nil 		end	 	end 	function this:SetProperty(prop, value) 		mPart1[prop] = value 		mPart2[prop] = value 	end 	this:Set(a, b, c) 	function this:Destroy() 		mPart1:Destroy() 		mPart2:Destroy() 	end 	this.p1 = mPart1 	this.p2 = mPart2 	this.p1.BrickColor = BrickColor.new(GetDiscoColor(math.noise(0.5, 0.5, this.p1.CFrame.Y * 0.5 + time()))) 	this.p2.BrickColor = BrickColor.new(GetDiscoColor(math.noise(0.5, 0.5, this.p2.CFrame.Y * 0.5 + time()))) 	return this end function verlet.draw(object, id) 	if object.class == "Point" then 		local part = parts[id] 		part.BrickColor = BrickColor.new(1, 1, 1) 		part.Transparency = 0 		part.formFactor = 3 		part.Anchored = true 		part.CanCollide = false 		part.TopSurface = 0 		part.BottomSurface = 0 		part.Size = Vector3.new(0.35, 0.35, 0.35) 		part.Material = "Neon" 		part.CFrame = CFrame.new(object.position) 		part.Parent = torso 		return part 	elseif object.class == "Link" then 		local part = parts[id] 		local dist = (object.point1.position - object.point2.position).magnitude 		part.Size = Vector3.new(0.2, 0.2, dist) 		part.CFrame = CFrame.new(object.point1.position, object.point2.position) * CFrame.new(0, 0, dist * -0.5) 		part.Parent = torso 		return part 	end end function verlet.clear() 	for _, v in pairs(workspace:GetChildren()) do 		if v.Name == "Part" then 			v:Destroy() 		end 	end end local points = {} local links = {} for x = 0, 2 do 	points[x] = {} 	for y = 0, 3 do 		points[x][y] = verlet.new("Point", torso.Position + Vector3.new(x * 0.8 - 2, 2 - y * 0.8, 5 + y * 0.4)) 		points[x][y].fixed = y == 0 	end end for x = 1, 2 do 	for y = 0, 3 do 		links[#links + 1] = verlet.new("Link", points[x][y], points[x - 1][y], 1 + y * 0.08) 	end end for x = 0, 2 do 	for y = 1, 3 do 		links[#links + 1] = verlet.new("Link", points[x][y], points[x][y - 1], 1.2 + y * 0.03) 	end end render:connect(function() 	for x = 0, 2 do 		for y = 0, 3 do 			if y == 0 then 				points[x][y].position = (torso.CFrame * CFrame.new(x * 1 - 1, 1, 0.5)).p 			else 				points[x][y]:step() 			end 		end 	end 	for i = 1, #links do 		links[i]:step() 	end 	for i = 1, #tris do 		triParts[#triParts + 1] = tris[i].p1 		triParts[#triParts + 1] = tris[i].p2 	end 	tris = {} 	for x = 1, 2 do 		for y = 1, 3 do 			tris[#tris + 1] = drawTri(torso, points[x - 1][y - 1].position, points[x - 1][y].position, points[x][y - 1].position) 			tris[#tris + 1] = drawTri(torso, points[x][y].position, points[x - 1][y].position, points[x][y - 1].position) 		end 	end end)
+
+end)
+
+-- credits
+
+local credits = Window:NewTab("credits")
+
+local creditsSection = credits:NewSection("credits")
+
+creditsSection:NewLabel("credits to Kavo UI Library")
+
+creditsSection:NewLabel("owner is Slinzo1")
+
+creditsSection:NewLabel("i made with visual stuido")
+
+creditsSection:NewLabel("if u use this script make sure to give credits")
